@@ -5,7 +5,7 @@ import { UsersService } from './users.service';
 describe('UsersController', () => {
   let usersController: UsersController;
   const mockUsersService: jest.Mocked<UsersService> = {
-    findAll: jest.fn<string[], []>(),
+    findAll: jest.fn(),
   };
 
   beforeEach(async () => {
