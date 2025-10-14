@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { UsersRepository } from './users.repository';
-import { UserDocument } from './schemas/user.schema';
+import { User, UserDocument } from './schemas/user.schema';
 import { NotFoundException } from '@nestjs/common';
 
 describe('UsersService', () => {
@@ -9,6 +9,7 @@ describe('UsersService', () => {
   const usersRepositoryMock = {
     findAll: jest.fn(),
     findById: jest.fn(),
+    create: jest.fn(),
   } as unknown as jest.Mocked<UsersRepository>;
 
   beforeEach(async () => {
@@ -65,6 +66,20 @@ describe('UsersService', () => {
       await expect(service.findById('id')).rejects.toThrow(
         new NotFoundException('User with id "id" not found'),
       );
+    });
+  });
+
+  describe('create', () => {
+    it('should create a user', async () => {
+      // ARRANGE
+      const user: User = { email: 'email', name: 'name' };
+      const createdUser = { ...user, _id: 'userId' };
+      usersRepositoryMock.create.mockResolvedValue(createdUser as UserDocument);
+      // ACT
+      const result = await service.create(user);
+      // ASSERT
+      expect(result).toEqual(createdUser);
+      expect(usersRepositoryMock.create).toHaveBeenCalledWith(user);
     });
   });
 });

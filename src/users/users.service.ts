@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
-import { UserDocument } from './schemas/user.schema';
+import { User, UserDocument } from './schemas/user.schema';
 
 @Injectable()
 export class UsersService {
@@ -16,5 +16,9 @@ export class UsersService {
       throw new NotFoundException(`User with id "${id}" not found`);
     }
     return user;
+  }
+
+  async create(user: User): Promise<UserDocument> {
+    return this.usersRepository.create(user);
   }
 }
