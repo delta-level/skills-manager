@@ -29,4 +29,12 @@ export class UsersService {
     }
     return updatedUser;
   }
+
+  async delete(id: string): Promise<UserDocument> {
+    const deletedUser = await this.usersRepository.delete(id);
+    if (!deletedUser) {
+      throw new NotFoundException(`User with id "${id}" not found`);
+    }
+    return deletedUser;
+  }
 }

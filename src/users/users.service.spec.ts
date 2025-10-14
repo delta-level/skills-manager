@@ -12,6 +12,7 @@ describe('UsersService', () => {
     findAll: jest.fn(),
     findById: jest.fn(),
     update: jest.fn(),
+    delete: jest.fn(),
   } as unknown as jest.Mocked<UsersRepository>;
 
   beforeEach(async () => {
@@ -87,6 +88,7 @@ describe('UsersService', () => {
 
   describe('update', () => {
     it('should update a user by id from repository', async () => {
+      // ARRANGE
       const userId = 'userId';
       const updateData = { email: 'newEmail' };
       const updatedUser: Partial<UserDocument> = {
@@ -95,7 +97,9 @@ describe('UsersService', () => {
         name: 'name',
       };
       usersRepositoryMock.update.mockResolvedValue(updatedUser as UserDocument);
+      // ACT
       const result = await service.update(userId, updateData);
+      // ASSERT
       expect(result).toEqual(updatedUser);
       expect(usersRepositoryMock.update).toHaveBeenCalledWith(
         userId,
@@ -103,10 +107,34 @@ describe('UsersService', () => {
       );
     });
     it('should throw error 404 if no user is found', async () => {
+      // ARRANGE
       usersRepositoryMock.update.mockResolvedValue(null);
+      // ACT & ASSERT
       await expect(
         service.update('userId', { email: 'newEmail' }),
       ).rejects.toThrow(
+        new NotFoundException('User with id "userId" not found'),
+      );
+    });
+  });
+  describe('delete', () => {
+    it('should delete a user through the repository and delete it', async () => {
+      const userId = 'userId';
+      const deletedUser: Partial<UserDocument> = {
+        _id: userId,
+        email: 'email',
+        name: 'name',
+      };
+      usersRepositoryMock.delete.mockResolvedValue(deletedUser as UserDocument);
+      const result = await service.delete(userId);
+      expect(result).toEqual(deletedUser);
+      expect(usersRepositoryMock.delete).toHaveBeenCalledWith(userId);
+    });
+    it('should throw error 404 if no user is found', async () => {
+      // ARRANGE
+      usersRepositoryMock.delete.mockResolvedValue(null);
+      // ACT & ASSERT
+      await expect(service.delete('userId')).rejects.toThrow(
         new NotFoundException('User with id "userId" not found'),
       );
     });
