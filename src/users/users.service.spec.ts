@@ -3,13 +3,15 @@ import { UsersService } from './users.service';
 import { UsersRepository } from './users.repository';
 import { User, UserDocument } from './schemas/user.schema';
 import { NotFoundException } from '@nestjs/common';
+import { Types } from 'mongoose';
 
 describe('UsersService', () => {
   let service: UsersService;
   const usersRepositoryMock = {
+    create: jest.fn(),
     findAll: jest.fn(),
     findById: jest.fn(),
-    create: jest.fn(),
+    update: jest.fn(),
   } as unknown as jest.Mocked<UsersRepository>;
 
   beforeEach(async () => {
@@ -29,6 +31,20 @@ describe('UsersService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('create', () => {
+    it('should create a user', async () => {
+      // ARRANGE
+      const user: User = { email: 'email', name: 'name' };
+      const createdUser = { ...user, _id: 'userId' };
+      usersRepositoryMock.create.mockResolvedValue(createdUser as UserDocument);
+      // ACT
+      const result = await service.create(user);
+      // ASSERT
+      expect(result).toEqual(createdUser);
+      expect(usersRepositoryMock.create).toHaveBeenCalledWith(user);
+    });
   });
 
   describe('findAll', () => {
@@ -69,17 +85,30 @@ describe('UsersService', () => {
     });
   });
 
-  describe('create', () => {
-    it('should create a user', async () => {
-      // ARRANGE
-      const user: User = { email: 'email', name: 'name' };
-      const createdUser = { ...user, _id: 'userId' };
-      usersRepositoryMock.create.mockResolvedValue(createdUser as UserDocument);
-      // ACT
-      const result = await service.create(user);
-      // ASSERT
-      expect(result).toEqual(createdUser);
-      expect(usersRepositoryMock.create).toHaveBeenCalledWith(user);
+  describe('update', () => {
+    it('should update a user by id from repository', async () => {
+      const userId = 'userId';
+      const updateData = { email: 'newEmail' };
+      const updatedUser: Partial<UserDocument> = {
+        _id: userId as unknown as Types.ObjectId,
+        email: 'newEmail',
+        name: 'name',
+      };
+      usersRepositoryMock.update.mockResolvedValue(updatedUser as UserDocument);
+      const result = await service.update(userId, updateData);
+      expect(result).toEqual(updatedUser);
+      expect(usersRepositoryMock.update).toHaveBeenCalledWith(
+        userId,
+        updateData,
+      );
+    });
+    it('should throw error 404 if no user is found', async () => {
+      usersRepositoryMock.update.mockResolvedValue(null);
+      await expect(
+        service.update('userId', { email: 'newEmail' }),
+      ).rejects.toThrow(
+        new NotFoundException('User with id "userId" not found'),
+      );
     });
   });
 });

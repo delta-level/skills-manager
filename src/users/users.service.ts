@@ -6,6 +6,10 @@ import { User, UserDocument } from './schemas/user.schema';
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
+  async create(user: User): Promise<UserDocument> {
+    return this.usersRepository.create(user);
+  }
+
   async findAll(): Promise<UserDocument[]> {
     return this.usersRepository.findAll();
   }
@@ -18,7 +22,11 @@ export class UsersService {
     return user;
   }
 
-  async create(user: User): Promise<UserDocument> {
-    return this.usersRepository.create(user);
+  async update(id: string, updateData: Partial<User>): Promise<UserDocument> {
+    const updatedUser = await this.usersRepository.update(id, updateData);
+    if (!updatedUser) {
+      throw new NotFoundException(`User with id "${id}" not found`);
+    }
+    return updatedUser;
   }
 }
