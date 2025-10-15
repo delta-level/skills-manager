@@ -4,10 +4,26 @@
 
 System to manage skills
 
+### TODOs
+
+Current branch
+
+- [] Convert MongoDB-based `users.repository` into PostgreSQL
+- [] Generate migrations for users
+- [] Remove MongoDB-related dependencies
+- [] Merge to `main`
+
+Main
+
+- [] Add authentication
+- [] Email sending
+- [] Finances CRUD
+- [] Activities CRUD
+
 ## Project setup
 
 ```bash
-$ npm install
+npm install
 ```
 
 ## Compile and run the project
@@ -22,7 +38,9 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
 ## Swagger Documentation API
+
 ```bash
 http://localhost:3000/docs
 ```
@@ -33,16 +51,18 @@ In the project directory, you can run:
 
 > **Note:** Following commands and scripts will only run on Linux bash, not on other OS native CLI's.
 
-| Command                       | Description                                                 |
-|-------------------------------|-------------------------------------------------------------|
-| `npm run migration:generate`  | Generates a new migration.                                  |
-| `npm run migration:run`       | Runs the new migration to sync with the given database.     |
-| `npm run migration:revert`    | Reverts the specified migration.                            |
+| Command                      | Description                                             |
+| ---------------------------- | ------------------------------------------------------- |
+| `npm run migration:generate` | Generates a new migration.                              |
+| `npm run migration:run`      | Runs the new migration to sync with the given database. |
+| `npm run migration:revert`   | Reverts the specified migration.                        |
 
 ### Example
+
 ```bash
-npm run migration:generate -- src/db/migrations/CreateUsers   
+npm run migration:generate -- src/db/migrations/CreateUsers
 ```
+
 ## Run tests
 
 ```bash
@@ -63,8 +83,8 @@ When you're ready to deploy your NestJS application to production, there are som
 If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm install -g @nestjs/mau
+mau deploy
 ```
 
 With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
