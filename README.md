@@ -8,9 +8,9 @@ System to manage skills
 
 Main
 
-- [x] Convert MongoDB-based `users.repository` into PostgreSQL
-- [x] Generate migrations for users
-- [x] Remove MongoDB-related dependencies
+- [x] ~Convert MongoDB-based `users.repository` into PostgreSQL~
+- [x] ~Generate migrations for users~
+- [x] ~Remove MongoDB-related dependencies~
 - [ ] Add authentication
 - [ ] Email sending
 - [ ] Finances CRUD
