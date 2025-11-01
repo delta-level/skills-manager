@@ -11,10 +11,10 @@ Main
 - [x] ~Convert MongoDB-based `users.repository` into PostgreSQL~
 - [x] ~Generate migrations for users~
 - [x] ~Remove MongoDB-related dependencies~
-- [x] Verify body when calling `users` API
-- [x] Fix app.e2e test
-  - [x] Add a /health endpoint and test that
-- [x] Update swagger documentation
+- [x] ~Verify body when calling `users` API~
+- [x] ~Fix app.e2e test~
+  - [x] ~Add a /health endpoint and test that~
+- [x] ~Update swagger documentation~
 - [ ] Add authentication
 - [ ] Add CI/CD pipeline?
 - [ ] Email sending
