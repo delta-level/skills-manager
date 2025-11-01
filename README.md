@@ -8,7 +8,7 @@ System to manage skills
 
 Current Branch
 
-- [ ] Verify body when calling `users` API
+- [x] Verify body when calling `users` API
 - [ ] Fix app.e2e test
   - [ ] Add a /health endpoint and test that
 
@@ -61,10 +61,14 @@ Start the PostgreSQL Docker container:
 docker-compose up -d
 ```
 
-Create the test database (one-time setup):
+Create the required databases (one-time setup):
 
 ```bash
-docker exec -it test psql -U postgres -c "CREATE DATABASE \"skills-manager-test\";"
+# Development database
+docker exec test psql -U postgres -c "CREATE DATABASE \"skills-manager-dev\";"
+
+# Test database
+docker exec test psql -U postgres -c "CREATE DATABASE \"skills-manager-test\";"
 ```
 
 Run migrations:
