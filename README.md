@@ -6,15 +6,11 @@ System to manage skills
 
 ### TODOs
 
-Current branch
-
-- [] Convert MongoDB-based `users.repository` into PostgreSQL
-- [] Generate migrations for users
-- [] Remove MongoDB-related dependencies
-- [] Merge to `main`
-
 Main
 
+- [x] Convert MongoDB-based `users.repository` into PostgreSQL
+- [x] Generate migrations for users
+- [x] Remove MongoDB-related dependencies
 - [] Add authentication
 - [] Email sending
 - [] Finances CRUD
