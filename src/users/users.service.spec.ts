@@ -1,9 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { UsersRepository } from './users.repository';
-import { User, UserDocument } from './schemas/user.schema';
+import { User } from './entities/user.entity';
 import { NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -37,14 +36,14 @@ describe('UsersService', () => {
   describe('create', () => {
     it('should create a user', async () => {
       // ARRANGE
-      const user: User = { email: 'email', name: 'name' };
-      const createdUser = { ...user, _id: 'userId' };
-      usersRepositoryMock.create.mockResolvedValue(createdUser as UserDocument);
+      const userData: Partial<User> = { email: 'email', name: 'name' };
+      const createdUser = { ...userData, id: 'userId' };
+      usersRepositoryMock.create.mockResolvedValue(createdUser as User);
       // ACT
-      const result = await service.create(user);
+      const result = await service.create(userData);
       // ASSERT
       expect(result).toEqual(createdUser);
-      expect(usersRepositoryMock.create).toHaveBeenCalledWith(user);
+      expect(usersRepositoryMock.create).toHaveBeenCalledWith(userData);
     });
   });
 
@@ -52,9 +51,7 @@ describe('UsersService', () => {
     it('should find all from repository', async () => {
       // ARRANGE
       const users = ['user1', 'user2'];
-      usersRepositoryMock.findAll.mockResolvedValue(
-        users as unknown as UserDocument[],
-      );
+      usersRepositoryMock.findAll.mockResolvedValue(users as unknown as User[]);
       // ACT
       const result = await service.findAll();
       // ASSERT
@@ -67,9 +64,7 @@ describe('UsersService', () => {
     it('should find user by id from repository', async () => {
       // ARRANGE
       const user = 'user';
-      usersRepositoryMock.findById.mockResolvedValue(
-        user as unknown as UserDocument,
-      );
+      usersRepositoryMock.findById.mockResolvedValue(user as unknown as User);
       // ACT
       const result = await service.findById('id');
       // ASSERT
@@ -91,12 +86,12 @@ describe('UsersService', () => {
       // ARRANGE
       const userId = 'userId';
       const updateData = { email: 'newEmail' };
-      const updatedUser: Partial<UserDocument> = {
-        _id: userId as unknown as Types.ObjectId,
+      const updatedUser: Partial<User> = {
+        id: userId,
         email: 'newEmail',
         name: 'name',
       };
-      usersRepositoryMock.update.mockResolvedValue(updatedUser as UserDocument);
+      usersRepositoryMock.update.mockResolvedValue(updatedUser as User);
       // ACT
       const result = await service.update(userId, updateData);
       // ASSERT
@@ -120,12 +115,12 @@ describe('UsersService', () => {
   describe('delete', () => {
     it('should delete a user through the repository and delete it', async () => {
       const userId = 'userId';
-      const deletedUser: Partial<UserDocument> = {
-        _id: userId,
+      const deletedUser: Partial<User> = {
+        id: userId,
         email: 'email',
         name: 'name',
       };
-      usersRepositoryMock.delete.mockResolvedValue(deletedUser as UserDocument);
+      usersRepositoryMock.delete.mockResolvedValue(deletedUser as User);
       const result = await service.delete(userId);
       expect(result).toEqual(deletedUser);
       expect(usersRepositoryMock.delete).toHaveBeenCalledWith(userId);

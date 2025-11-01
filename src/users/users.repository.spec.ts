@@ -1,23 +1,28 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getModelToken } from '@nestjs/mongoose';
+import { getRepositoryToken } from '@nestjs/typeorm';
+// import { Repository } from 'typeorm';
 import { UsersRepository } from './users.repository';
-import { User, UserDocument } from './schemas/user.schema';
+import { User } from './entities/user.entity';
 
 describe('UsersRepository', () => {
   let repository: UsersRepository;
+  // let typeormRepository: Repository<User>;
 
-  const mockUser: Partial<UserDocument> = {
-    _id: '507f1f77bcf86cd799439011',
+  const mockUser: User = {
+    id: '507f1f77-bcf8-6cd7-9943-9011abcdef01',
     name: 'John Doe',
     email: 'john@example.com',
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
-  const mockUserModel = {
+  const mockTypeormRepository = {
     create: jest.fn(),
+    save: jest.fn(),
     find: jest.fn(),
-    findById: jest.fn(),
-    findByIdAndUpdate: jest.fn(),
-    findByIdAndDelete: jest.fn(),
+    findOneBy: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -25,13 +30,14 @@ describe('UsersRepository', () => {
       providers: [
         UsersRepository,
         {
-          provide: getModelToken(User.name),
-          useValue: mockUserModel,
+          provide: getRepositoryToken(User),
+          useValue: mockTypeormRepository,
         },
       ],
     }).compile();
 
     repository = module.get<UsersRepository>(UsersRepository);
+    // typeormRepository = module.get<Repository<User>>(getRepositoryToken(User));
   });
 
   afterEach(() => {
@@ -45,35 +51,31 @@ describe('UsersRepository', () => {
   describe('findAll', () => {
     it('should return all users', async () => {
       const users = [mockUser];
-      mockUserModel.find.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(users),
-      });
+      mockTypeormRepository.find.mockResolvedValue(users);
 
       const result = await repository.findAll();
 
-      expect(mockUserModel.find).toHaveBeenCalled();
+      expect(mockTypeormRepository.find).toHaveBeenCalled();
       expect(result).toEqual(users);
     });
   });
 
   describe('findById', () => {
     it('should return a user by id', async () => {
-      const userId = '507f1f77bcf86cd799439011';
-      mockUserModel.findById.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(mockUser),
-      });
+      const userId = '507f1f77-bcf8-6cd7-9943-9011abcdef01';
+      mockTypeormRepository.findOneBy.mockResolvedValue(mockUser);
 
       const result = await repository.findById(userId);
 
-      expect(mockUserModel.findById).toHaveBeenCalledWith(userId);
+      expect(mockTypeormRepository.findOneBy).toHaveBeenCalledWith({
+        id: userId,
+      });
       expect(result).toEqual(mockUser);
     });
 
     it('should return null if user not found', async () => {
-      const userId = '507f1f77bcf86cd799439011';
-      mockUserModel.findById.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(null),
-      });
+      const userId = '507f1f77-bcf8-6cd7-9943-9011abcdef01';
+      mockTypeormRepository.findOneBy.mockResolvedValue(null);
 
       const result = await repository.findById(userId);
 
@@ -83,20 +85,18 @@ describe('UsersRepository', () => {
 
   describe('update', () => {
     it('should update a user', async () => {
-      const userId = '507f1f77bcf86cd799439011';
+      const userId = '507f1f77-bcf8-6cd7-9943-9011abcdef01';
       const updateData = { name: 'Jane Doe' };
       const updatedUser = { ...mockUser, ...updateData };
 
-      mockUserModel.findByIdAndUpdate.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(updatedUser),
-      });
+      mockTypeormRepository.update.mockResolvedValue({ affected: 1 });
+      mockTypeormRepository.findOneBy.mockResolvedValue(updatedUser);
 
       const result = await repository.update(userId, updateData);
 
-      expect(mockUserModel.findByIdAndUpdate).toHaveBeenCalledWith(
+      expect(mockTypeormRepository.update).toHaveBeenCalledWith(
         userId,
         updateData,
-        { new: true },
       );
       expect(result).toEqual(updatedUser);
     });
@@ -104,14 +104,13 @@ describe('UsersRepository', () => {
 
   describe('delete', () => {
     it('should delete a user', async () => {
-      const userId = '507f1f77bcf86cd799439011';
-      mockUserModel.findByIdAndDelete.mockReturnValue({
-        exec: jest.fn().mockResolvedValue(mockUser),
-      });
+      const userId = '507f1f77-bcf8-6cd7-9943-9011abcdef01';
+      mockTypeormRepository.findOneBy.mockResolvedValue(mockUser);
+      mockTypeormRepository.delete.mockResolvedValue({ affected: 1 });
 
       const result = await repository.delete(userId);
 
-      expect(mockUserModel.findByIdAndDelete).toHaveBeenCalledWith(userId);
+      expect(mockTypeormRepository.delete).toHaveBeenCalledWith(userId);
       expect(result).toEqual(mockUser);
     });
   });

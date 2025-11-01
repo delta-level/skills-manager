@@ -1,9 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { User, UserDocument } from './schemas/user.schema';
+import { User } from './entities/user.entity';
 import { NotFoundException } from '@nestjs/common';
-import { Types } from 'mongoose';
 
 describe('UsersController', () => {
   let usersController: UsersController;
@@ -35,14 +34,14 @@ describe('UsersController', () => {
   describe('create', () => {
     it('should create a user', async () => {
       // ARRANGE
-      const user: User = { email: 'email', name: 'name' };
-      const createdUser = { ...user, _id: 'userId' };
-      mockUsersService.create.mockResolvedValue(createdUser as UserDocument);
+      const userData: Partial<User> = { email: 'email', name: 'name' };
+      const createdUser = { ...userData, id: 'userId' };
+      mockUsersService.create.mockResolvedValue(createdUser as User);
       // ACT
-      const result = await usersController.create(user);
+      const result = await usersController.create(userData);
       // ASSERT
       expect(result).toEqual(createdUser);
-      expect(mockUsersService.create).toHaveBeenCalledWith(user);
+      expect(mockUsersService.create).toHaveBeenCalledWith(userData);
     });
   });
 
@@ -51,7 +50,7 @@ describe('UsersController', () => {
       // ARRANGE
       const expectedUsers = ['user1', 'user2'];
       mockUsersService.findAll.mockResolvedValue(
-        expectedUsers as unknown as UserDocument[],
+        expectedUsers as unknown as User[],
       );
       // ACT
       const result = await usersController.findAll();
@@ -65,9 +64,7 @@ describe('UsersController', () => {
     it('should find user by id', async () => {
       // ARRANGE
       const user = 'user';
-      mockUsersService.findById.mockResolvedValue(
-        user as unknown as UserDocument,
-      );
+      mockUsersService.findById.mockResolvedValue(user as unknown as User);
       // ACT
       const result = await usersController.findById('id');
       // ASSERT
@@ -91,12 +88,12 @@ describe('UsersController', () => {
       // ARRANGE
       const userId = 'userId';
       const updateData = { email: 'newEmail' };
-      const updatedUser: Partial<UserDocument> = {
-        _id: userId as unknown as Types.ObjectId,
+      const updatedUser: Partial<User> = {
+        id: userId,
         email: 'newEmail',
         name: 'name',
       };
-      mockUsersService.update.mockResolvedValue(updatedUser as UserDocument);
+      mockUsersService.update.mockResolvedValue(updatedUser as User);
       // ACT
       const result = await usersController.update(userId, updateData);
       // ASSERT
@@ -121,12 +118,12 @@ describe('UsersController', () => {
     it('should delete a user by id', async () => {
       // ARRANGE
       const userId = 'userId';
-      const deletedUser: Partial<UserDocument> = {
-        _id: userId,
+      const deletedUser: Partial<User> = {
+        id: userId,
         email: 'email',
         name: 'name',
       };
-      mockUsersService.delete.mockResolvedValue(deletedUser as UserDocument);
+      mockUsersService.delete.mockResolvedValue(deletedUser as User);
       // ACT
       const result = await usersController.delete(userId);
       // ASSERT
