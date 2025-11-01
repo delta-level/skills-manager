@@ -6,8 +6,8 @@
   "private": true,
   "license": "UNLICENSED",
   "engines": {
-    "node": "==24.4.1",
-    "npm": "==11.4.2"
+    "node": "24.4.1",
+    "npm": "11.4.2"
   },
   "scripts": {
     "build": "nest build",
@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "^11.2.0",

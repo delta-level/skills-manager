@@ -1,14 +1,23 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UserController } from './user/user.controller';
-import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from './users/users.module';
+import { UsersController } from './users/users.controller';
+
+import { AuthModule } from './auth/auth.module';
 import { dataSourceOptions } from './db/data-source';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(dataSourceOptions), AuthModule],
-  controllers: [AppController, UserController],
-  providers: [AppService],
+  imports: [
+    TypeOrmModule.forRoot(dataSourceOptions),
+    AuthModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['.env.local', '.env'],
+    }),
+    UsersModule,
+  ],
+  controllers: [UsersController],
+  providers: [],
 })
 export class AppModule {}
