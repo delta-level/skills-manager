@@ -3,6 +3,7 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { NotFoundException } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
 
 describe('UsersController', () => {
   let usersController: UsersController;
@@ -34,14 +35,14 @@ describe('UsersController', () => {
   describe('create', () => {
     it('should create a user', async () => {
       // ARRANGE
-      const userData: Partial<User> = { email: 'email', name: 'name' };
-      const createdUser = { ...userData, id: 'userId' };
+      const createUserDto: CreateUserDto = { email: 'email', name: 'name' };
+      const createdUser = { ...createUserDto, id: 'userId' };
       mockUsersService.create.mockResolvedValue(createdUser as User);
       // ACT
-      const result = await usersController.create(userData);
+      const result = await usersController.create(createUserDto);
       // ASSERT
       expect(result).toEqual(createdUser);
-      expect(mockUsersService.create).toHaveBeenCalledWith(userData);
+      expect(mockUsersService.create).toHaveBeenCalledWith(createUserDto);
     });
   });
 

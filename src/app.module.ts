@@ -7,6 +7,7 @@ import { UsersController } from './users/users.controller';
 
 import { AuthModule } from './auth/auth.module';
 import { dataSourceOptions } from './db/data-source';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { dataSourceOptions } from './db/data-source';
       ],
     }),
     UsersModule,
+    HealthModule,
   ],
   controllers: [UsersController],
   providers: [
