@@ -3,20 +3,37 @@ import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../../src/app.module';
+import { DataSource } from 'typeorm';
 
 describe('UsersController (e2e)', () => {
   let app: INestApplication<App>;
+  let dataSource: DataSource;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
+
+    dataSource = app.get(DataSource);
+
+    // Safety check - only run tests on test database
+    const dbName = dataSource.options.database;
+    if (dbName !== 'skills-manager-test') {
+      throw new Error(
+        `Tests must run on test database! Current database: ${dbName}`,
+      );
+    }
   });
 
-  afterEach(async () => {
+  beforeEach(async () => {
+    // Clean up test data before each test
+    await dataSource.query('TRUNCATE TABLE users CASCADE');
+  });
+
+  afterAll(async () => {
     await app.close();
   });
 
