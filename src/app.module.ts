@@ -13,7 +13,12 @@ import { dataSourceOptions } from './db/data-source';
     AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env.local', '.env'],
+      envFilePath: [
+        '.env.local',
+        `.env.${process.env.NODE_ENV || 'dev'}.local`,
+        `.env.${process.env.NODE_ENV || 'dev'}`,
+        '.env',
+      ],
     }),
     UsersModule,
   ],

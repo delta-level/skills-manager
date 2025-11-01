@@ -6,12 +6,19 @@ System to manage skills
 
 ### TODOs
 
+Current Branch
+
+- [ ] Verify body when calling `users` API
+- [ ] Fix app.e2e test
+  - [ ] Add a /health endpoint and test that
+
 Main
 
 - [x] ~Convert MongoDB-based `users.repository` into PostgreSQL~
 - [x] ~Generate migrations for users~
 - [x] ~Remove MongoDB-related dependencies~
 - [ ] Add authentication
+- [ ] Add CI/CD pipeline?
 - [ ] Email sending
 - [ ] Finances CRUD
 - [ ] Activities CRUD
@@ -20,6 +27,54 @@ Main
 
 ```bash
 npm install
+```
+
+## Environment configuration
+
+The project uses environment files for configuration. Copy the template to create your local environment file:
+
+```bash
+cp .env.template .env
+```
+
+### Environment files
+
+The application loads environment files in the following priority order (highest to lowest):
+
+1. `.env.local` - Local overrides for all environments (not committed)
+2. `.env.{NODE_ENV}.local` - Environment-specific local overrides (not committed)
+3. `.env.{NODE_ENV}` - Environment-specific configuration (committed)
+4. `.env` - Base configuration (not committed, created from `.env.template`)
+
+Available environment files:
+
+- `.env.template` - Template with all required variables (committed)
+- `.env.dev` - Development environment overrides (committed)
+- `.env.test` - Test environment overrides (committed)
+- `.env.local` - Local secrets and overrides (not committed)
+
+### Database setup
+
+Start the PostgreSQL Docker container:
+
+```bash
+docker-compose up -d
+```
+
+Create the test database (one-time setup):
+
+```bash
+docker exec -it test psql -U postgres -c "CREATE DATABASE \"skills-manager-test\";"
+```
+
+Run migrations:
+
+```bash
+# Development database
+npm run migration:run
+
+# Test database
+NODE_ENV=test npm run migration:run
 ```
 
 ## Compile and run the project
